@@ -10,8 +10,17 @@ router.get("/", (req, res, next) => {
 
 // [POST] /tasks/
 router.post("/", (req, res, next) => {
-    res.status(200).json({
-        message: "First POST route"
+    const task = {
+        title: req.body.title,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
+        time: req.body.time,
+        description: req.body.description
+    };
+
+    res.status(201).json({
+        message: "First POST route",
+        createdTask: task
     });
 });
 
