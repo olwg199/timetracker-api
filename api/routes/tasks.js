@@ -48,7 +48,7 @@ router.get("/:taskId", (req, res, next) => {
             if (doc) {
                 res.status(200).json(doc);
             } else {
-                res.status(404).json({ message: "No valid entry found for provided Id" })
+                res.status(404).json({ message: "No valid entry found for provided Id" });
             }
         })
         .catch(err => {
@@ -70,10 +70,16 @@ router.patch("/:taskId", (req, res, next) => {
 router.delete("/:taskId", (req, res, next) => {
     const id = req.params.taskId;
 
-    res.status(200).json({
-        message: "Deleted product",
-        id: id
-    });
+    Task.remove({ _id: id })
+        .exec()
+        .then(result => {
+            if (result.deletedCount === 0) {
+                res.status(404).json({ message: "No valid entry found for provided Id" });
+            } else {
+                res.status(200).json(result)
+            }
+        })
+        .catch(err => res.status(500).json({ error: err }));
 });
 
 module.exports = router;
