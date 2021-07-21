@@ -11,9 +11,10 @@ const Task = require("../models/task");
 
 // [GET] /tasks/
 router.get("/", (req, res, next) => {
-    res.status(200).json({
-        message: "First GET route"
-    });
+    Task.find()
+        .exec()
+        .then(docs => res.status(200).json(docs))
+        .catch(err => res.status(500).json({ error: err }));
 });
 
 // [POST] /tasks/
