@@ -19,13 +19,13 @@ router.get("/", (req, res, next) => {
 // [POST] /tasks/
 router.post("/", (req, res, next) => {
     const task = new Task({
-        _id: new mongoose.Types.ObjectId,
         title: req.body.title,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
         time: req.body.time,
         description: req.body.description
     });
+
     task
         .save()
         .then(result => console.log(result))
@@ -40,17 +40,19 @@ router.post("/", (req, res, next) => {
 // [GET] /tasks/{taskId}
 router.get("/:taskId", (req, res, next) => {
     const id = req.params.taskId;
-    if (id === "special") {
-        res.status(200).json({
-            message: "First POST route",
-            id: id
+
+    Task.findById(id)
+        .exec()
+        .then(doc => {
+            if (doc) {
+                res.status(200).json(doc);
+            } else {
+                res.status(404).json({ message: "No valid entry found for provided Id" })
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ error: err });
         });
-    } else {
-        res.status(200).json({
-            message: "You passed an ID",
-            id: id
-        });
-    }
 });
 
 // [PATCH] /tasks/{taskId}
