@@ -1,5 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
+
+mongoose.connect(
+    'mongodb://localhost:27017/timetracker',
+    { useNewUrlParser: true, useUnifiedTopology: true }
+);
+
+const Task = require("../models/task");
 
 // [GET] /tasks/
 router.get("/", (req, res, next) => {
@@ -10,13 +18,18 @@ router.get("/", (req, res, next) => {
 
 // [POST] /tasks/
 router.post("/", (req, res, next) => {
-    const task = {
+    const task = new Task({
+        _id: new mongoose.Types.ObjectId,
         title: req.body.title,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
         time: req.body.time,
         description: req.body.description
-    };
+    });
+    task
+        .save()
+        .then(result => console.log(result))
+        .catch(err => console.log(err));
 
     res.status(201).json({
         message: "First POST route",
