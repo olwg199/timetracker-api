@@ -27,15 +27,16 @@ router.post("/", (req, res, next) => {
         description: req.body.description
     });
 
-    task
-        .save()
-        .then(result => console.log(result))
-        .catch(err => console.log(err));
-
-    res.status(201).json({
-        message: "First POST route",
-        createdTask: task
-    });
+    task.save()
+        .then(result => {
+            res.status(201).json({
+                message: "First POST route",
+                createdTask: task
+            })
+        })
+        .catch(err => {
+            res.status(404).json({ error: err })
+        });
 });
 
 // [GET] /tasks/{taskId}
@@ -59,6 +60,20 @@ router.get("/:taskId", (req, res, next) => {
 // [PATCH] /tasks/{taskId}
 router.patch("/:taskId", (req, res, next) => {
     const id = req.params.taskId;
+    const updateOps = {};
+    console.log(req.body);
+    for (const ops of Object.keys(req.body)) {
+        updateOps[ops] = req.body["ops"];
+    }
+
+    Task.updateOne({ _id: id }, { $set: updateOps })
+        .exec()
+        .then(result => {
+            res.status(200).json(result)
+        })
+        .catch(err => {
+            res.status(500).json({ error: err });
+        });
 
     res.status(200).json({
         message: "Updated product",
