@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 
 mongoose.connect(
-    'mongodb://localhost:27017/timetracker',
+    process.env.MONGO_CONNECT,
     { useNewUrlParser: true, useUnifiedTopology: true }
 );
 
@@ -12,8 +12,27 @@ const Task = require("../models/task");
 // [GET] /tasks/
 router.get("/", (req, res, next) => {
     Task.find()
+        .select('_id title startDate endDate time description')
         .exec()
-        .then(docs => res.status(200).json(docs))
+        .then(tasks => {
+            res.status(200).json({
+                count: tasks.length,
+                tasks: tasks.map(task => {
+                    return {
+                        _id: task._id,
+                        title: task.title,
+                        startDate: task.startDate,
+                        endDate: task.endDate,
+                        time: task.time,
+                        description: task.description,
+                        request: {
+                            type: "GET",
+                            url: `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/${task._id}`
+                        }
+                    }
+                })
+            });
+        })
         .catch(err => res.status(500).json({ error: err }));
 });
 
@@ -28,11 +47,22 @@ router.post("/", (req, res, next) => {
     });
 
     task.save()
-        .then(result => {
+        .then(task => {
             res.status(201).json({
-                message: "First POST route",
-                createdTask: task
-            })
+                message: "Created task successfully",
+                createdTask: {
+                    _id: task._id,
+                    title: task.title,
+                    startDate: task.startDate,
+                    endDate: task.endDate,
+                    time: task.time,
+                    description: task.description,
+                    request: {
+                        type: "GET",
+                        url: `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/${task._id}`
+                    }
+                }
+            });
         })
         .catch(err => {
             res.status(404).json({ error: err })
@@ -44,10 +74,18 @@ router.get("/:taskId", (req, res, next) => {
     const id = req.params.taskId;
 
     Task.findById(id)
+        .select("_id title startDate endDate time description")
         .exec()
-        .then(doc => {
-            if (doc) {
-                res.status(200).json(doc);
+        .then(task => {
+            if (task) {
+                res.status(200).json({
+                    task: task,
+                    request: {
+                        type: "GET",
+                        description: "Get list of tasks",
+                        url: `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/`
+                    }
+                });
             } else {
                 res.status(404).json({ message: "No valid entry found for provided Id" });
             }
@@ -61,37 +99,43 @@ router.get("/:taskId", (req, res, next) => {
 router.patch("/:taskId", (req, res, next) => {
     const id = req.params.taskId;
     const updateOps = {};
-    console.log(req.body);
-    for (const ops of Object.keys(req.body)) {
-        updateOps[ops] = req.body["ops"];
+    for (const ops of req.body) {
+        updateOps[ops.propName] = ops.value;
     }
-
     Task.updateOne({ _id: id }, { $set: updateOps })
         .exec()
-        .then(result => {
-            res.status(200).json(result)
+        .then(task => {
+            res.status(200).json({
+                message: "Task updated successfully",
+                request: {
+                    type: "GET",
+                    url: `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/${id}`
+                }
+            })
         })
         .catch(err => {
             res.status(500).json({ error: err });
         });
-
-    res.status(200).json({
-        message: "Updated product",
-        id: id
-    });
 });
 
 // [DELETE] /tasks/{taskId}
 router.delete("/:taskId", (req, res, next) => {
     const id = req.params.taskId;
 
-    Task.remove({ _id: id })
+    Task.deleteOne({ _id: id })
         .exec()
         .then(result => {
             if (result.deletedCount === 0) {
                 res.status(404).json({ message: "No valid entry found for provided Id" });
             } else {
-                res.status(200).json(result)
+                res.status(200).json({
+                    message: "Task deleted successfully",
+                    request: {
+                        type: "GET",
+                        description: "See list of tasks",
+                        url: `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/`
+                    }
+                })
             }
         })
         .catch(err => res.status(500).json({ error: err }));
