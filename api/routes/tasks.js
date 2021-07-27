@@ -27,7 +27,7 @@ router.get("/", (req, res, next) => {
                         description: task.description,
                         request: {
                             type: "GET",
-                            url: `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/${task._id}`
+                            url: `${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/${task._id}`
                         }
                     }
                 })
@@ -59,7 +59,7 @@ router.post("/", (req, res, next) => {
                     description: task.description,
                     request: {
                         type: "GET",
-                        url: `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/${task._id}`
+                        url: `${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/${task._id}`
                     }
                 }
             });
@@ -83,7 +83,7 @@ router.get("/:taskId", (req, res, next) => {
                     request: {
                         type: "GET",
                         description: "Get list of tasks",
-                        url: `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/`
+                        url: `${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/`
                     }
                 });
             } else {
@@ -109,7 +109,7 @@ router.patch("/:taskId", (req, res, next) => {
                 message: "Task updated successfully",
                 request: {
                     type: "GET",
-                    url: `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/${id}`
+                    url: `${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/${id}`
                 }
             })
         })
@@ -133,7 +133,7 @@ router.delete("/:taskId", (req, res, next) => {
                     request: {
                         type: "GET",
                         description: "See list of tasks",
-                        url: `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/`
+                        url: `${process.env.SERVER_ADDRESS}:${process.env.PORT}/tasks/`
                     }
                 })
             }
