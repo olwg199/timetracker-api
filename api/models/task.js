@@ -5,16 +5,19 @@ const taskSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    startDate: {
-        type: Date,
-        required: true
-    },
-    endDate: {
-        type: Date,
-        required: true
-    },
     time: {
         type: Number,
+        required: true
+    },
+    frequency: {
+        type: String,
+        required: true
+    },
+    datesAchieved: {
+        type: [Date]
+    },
+    isActive: {
+        type: Boolean,
         required: true
     },
     description: String
