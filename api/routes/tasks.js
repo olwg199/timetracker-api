@@ -12,24 +12,25 @@ const Task = require("../models/task");
 // [GET] /tasks/
 router.get("/", (req, res, next) => {
     Task.find()
-        .select('_id title startDate endDate time description')
+        .select('_id title frequency time datesAchieved isActive description')
         .exec()
         .then(tasks => {
             res.status(200).json({
                 count: tasks.length,
                 tasks: tasks.map(task => {
                     return {
-                        _id: task._id,
-                        title: task.title,
-                        startDate: task.startDate,
-                        endDate: task.endDate,
-                        time: task.time,
-                        description: task.description,
-                        request: {
-                            type: "GET",
-                            url: `${process.env.SERVER_ADDRESS}/tasks/${task._id}`
-                        }
-                    }
+                        ...task._doc,
+                        request: [
+                            {
+                                type: "GET",
+                                url: `${process.env.SERVER_ADDRESS}/tasks/${task._id}`
+                            },
+                            {
+                                type: "DELETE",
+                                url: `${process.env.SERVER_ADDRESS}/tasks/${task._id}`
+                            }
+                        ]
+                    };
                 })
             });
         })
@@ -40,9 +41,10 @@ router.get("/", (req, res, next) => {
 router.post("/", (req, res, next) => {
     const task = new Task({
         title: req.body.title,
-        startDate: req.body.startDate,
-        endDate: req.body.endDate,
         time: req.body.time,
+        frequency: req.body.frequency,
+        datesAchieved: [],
+        isActive: req.body.isActive,
         description: req.body.description
     });
 
@@ -51,16 +53,17 @@ router.post("/", (req, res, next) => {
             res.status(201).json({
                 message: "Created task successfully",
                 createdTask: {
-                    _id: task._id,
-                    title: task.title,
-                    startDate: task.startDate,
-                    endDate: task.endDate,
-                    time: task.time,
-                    description: task.description,
-                    request: {
-                        type: "GET",
-                        url: `${process.env.SERVER_ADDRESS}/tasks/${task._id}`
-                    }
+                    ...task._doc,
+                    request: [
+                        {
+                            type: "GET",
+                            url: `${process.env.SERVER_ADDRESS}/tasks/${task._id}`
+                        },
+                        {
+                            type: "DELETE",
+                            url: `${process.env.SERVER_ADDRESS}/tasks/${task._id}`
+                        }
+                    ]
                 }
             });
         })
@@ -74,16 +77,24 @@ router.get("/:taskId", (req, res, next) => {
     const id = req.params.taskId;
 
     Task.findById(id)
-        .select("_id title startDate endDate time description")
+        .select("_id title frequency time datesAchieved isActive description")
         .exec()
         .then(task => {
             if (task) {
                 res.status(200).json({
-                    task: task,
-                    request: {
-                        type: "GET",
-                        description: "Get list of tasks",
-                        url: `${process.env.SERVER_ADDRESS}/tasks/`
+                    task: {
+                        ...task._doc,
+                        requests: [
+                            {
+                                type: "GET",
+                                description: "Get list of tasks",
+                                url: `${process.env.SERVER_ADDRESS}/tasks`
+                            },
+                            {
+                                type: "DELETE",
+                                url: `${process.env.SERVER_ADDRESS}/tasks/${task._id}`
+                            }
+                        ]
                     }
                 });
             } else {
