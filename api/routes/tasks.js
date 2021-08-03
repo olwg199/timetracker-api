@@ -109,10 +109,8 @@ router.get("/:taskId", (req, res, next) => {
 // [PATCH] /tasks/{taskId}
 router.patch("/:taskId", (req, res, next) => {
     const id = req.params.taskId;
-    const updateOps = {};
-    for (const ops of req.body) {
-        updateOps[ops.propName] = ops.value;
-    }
+    const updateOps = req.body;
+
     Task.updateOne({ _id: id }, { $set: updateOps })
         .exec()
         .then(task => {
