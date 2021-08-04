@@ -12,7 +12,7 @@ const Task = require("../models/task");
 // [GET] /tasks/
 router.get("/", (req, res, next) => {
     Task.find()
-        .select('_id title frequency time datesAchieved isActive description')
+        .select('title frequency time datesAchieved isActive description')
         .exec()
         .then(tasks => {
             res.status(200).json({
@@ -68,7 +68,15 @@ router.post("/", (req, res, next) => {
             });
         })
         .catch(err => {
-            res.status(404).json({ error: err })
+            let error = err;
+            if (err.name === "ValidationError") {
+                const fields = Object.keys(err.errors);
+                error = {
+                    missingFields: fields,
+                    errorMessage: `These fields are required: ${fields.join(", ")}.`
+                };
+            }
+            res.status(404).json(error)
         });
 });
 
@@ -102,7 +110,7 @@ router.get("/:taskId", (req, res, next) => {
             }
         })
         .catch(err => {
-            res.status(500).json({ error: err });
+            res.status(500).json({ err });
         });
 });
 
@@ -123,7 +131,7 @@ router.patch("/:taskId", (req, res, next) => {
             })
         })
         .catch(err => {
-            res.status(500).json({ error: err });
+            res.status(500).json({ err });
         });
 });
 
@@ -147,7 +155,7 @@ router.delete("/:taskId", (req, res, next) => {
                 })
             }
         })
-        .catch(err => res.status(500).json({ error: err }));
+        .catch(err => res.status(500).json({ err }));
 });
 
 module.exports = router;
