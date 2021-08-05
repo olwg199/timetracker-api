@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const app = express();
 
 const taskRoutes = require("./api/routes/tasks");
+const userRoutes = require("./api/routes/users");
 
 // Body parsing
 app.use(express.urlencoded({
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
 
 // Routes middlware
 app.use('/tasks', taskRoutes);
+app.use('/user', userRoutes);
 
 // Error handling
 app.use((req, res, next) => {
