@@ -3,6 +3,7 @@ require("dotenv").config();
 const port = process.env.PORT || 3000;
 const express = require("express");
 const morgan = require("morgan");
+const authentication = require("./api/middleware/authentication");
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use((req, res, next) => {
 });
 
 // Routes middlware
-app.use('/tasks', taskRoutes);
+app.use('/tasks', authentication, taskRoutes);
 app.use('/user', userRoutes);
 
 // Error handling
