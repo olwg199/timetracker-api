@@ -1,9 +1,10 @@
 require("dotenv").config();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 const express = require("express");
 const morgan = require("morgan");
 const authentication = require("./api/middleware/authentication");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.urlencoded({
     extended: false
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 // Logging
 app.use(morgan('dev'));
