@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const UserController = require("../controllers/user-controller");
 
 mongoose.connect(
     process.env.MONGO_CONNECT,
@@ -12,44 +13,9 @@ mongoose.connect(
 const User = require("../models/user");
 
 // [POST] /user/signup
-router.post("/signup", (req, res, next) => {
-    const username = req.body.username.toLowerCase();
-    User.findOne({ username })
-        .exec()
-        .then((user) => {
-            console.log(user);
-            if (user) {
-                res.status(409).json({
-                    message: "This username is already exists."
-                });
-            } else {
-                bcrypt.hash(req.body.password, 10, (err, hash) => {
-                    if (err) {
-                        res.status(500).json(err);
-                    } else {
-                        const user = new User({
-                            username: username,
-                            password: hash
-                        });
-                        user
-                            .save()
-                            .then((result) => {
-                                res.status(201).json({ meassge: "User created" })
-                            })
-                            .catch((err) => {
-                                res.status(500).json(err);
-                            });
-                    }
-                });
-            }
+router.post("/signup", UserController.signup);
 
-        })
-        .catch((err) => {
-            res.status(500).json(err);
-        });
-});
-
-// [POST] /user/login - login
+// [POST] /user/login
 router.post("/login", (req, res, next) => {
     const username = req.body.username.toLowerCase();
     User.findOne({ username })
@@ -86,5 +52,14 @@ router.post("/login", (req, res, next) => {
         });
 
 });
+
+// [POST] /user/logout
+router.post("/logout");
+
+// [POST] /user/activate/:link
+router.post("/activate/:link");
+
+// [POST] /user/refresh
+router.post("/refresh")
 
 module.exports = router;

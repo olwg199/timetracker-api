@@ -1,4 +1,4 @@
-module.export = class UserDto {
+module.exports = class UserDto {
     username;
     email;
     id;

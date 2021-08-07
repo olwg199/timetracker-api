@@ -11,4 +11,4 @@ const tokenSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("Token", userSchema);
+module.exports = mongoose.model("Token", tokenSchema);
