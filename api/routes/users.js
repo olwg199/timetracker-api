@@ -87,17 +87,4 @@ router.post("/login", (req, res, next) => {
 
 });
 
-// [GET] /tasks/{taskId}
-router.get("/:userId", (req, res, next) => {
-});
-
-// [PATCH] /tasks/{taskId}
-router.patch("/:userId", (req, res, next) => {
-});
-
-// [DELETE] /tasks/{taskId}
-router.delete("/:userId", (req, res, next) => {
-
-});
-
 module.exports = router;
