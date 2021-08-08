@@ -57,7 +57,7 @@ router.post("/login", (req, res, next) => {
 router.post("/logout");
 
 // [POST] /user/activate/:link
-router.post("/activate/:link");
+router.post("/activate/:link", UserController.activate);
 
 // [POST] /user/refresh
 router.post("/refresh")
