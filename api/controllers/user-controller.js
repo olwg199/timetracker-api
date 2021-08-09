@@ -8,7 +8,7 @@ class UserController {
             res.cookie("refreshToken", userData.refreshToken, {});
             return res.json(userData);
         } catch (e) {
-            console.log(e);
+            next(e);
         }
     };
 
@@ -16,9 +16,9 @@ class UserController {
         try {
             const activationLink = req.body.link;
             await userService.activate(activationLink);
-            return res.redirect.(process.env.CLIENT_URL);
+            return res.redirect(process.env.CLIENT_URL);
         } catch (e) {
-            console.log(e);
+            next(e);
         }
     };
 }

@@ -10,6 +10,7 @@ const app = express();
 
 const taskRoutes = require("./api/routes/tasks");
 const userRoutes = require("./api/routes/users");
+const error = require("./api/middleware/error");
 
 // Body parsing
 app.use(express.urlencoded({
@@ -35,19 +36,7 @@ app.use('/tasks', authentication, taskRoutes);
 app.use('/user', userRoutes);
 
 // Error handling
-app.use((req, res, next) => {
-    const error = new Error("Not found");
-    error.status = 404;
-    next(error);
-});
-app.use((error, req, res, next) => {
-    res.status(error.status || 500);
-    res.json({
-        error: {
-            message: error.message
-        }
-    })
-});
+app.use(error);
 
 app.listen(port, function () {
     console.log("Server is running on port " + port);

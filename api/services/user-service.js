@@ -5,13 +5,14 @@ const tokenService = require("./token-service");
 const UserDto = require("../dtos/user-dto");
 
 const User = require("../models/user");
+const ApiError = require("../exceptions/api-error");
 
 class UserService {
     async signup(username, password, email) {
         const candidate = await User.findOne({ username });
 
         if (candidate) {
-            throw new Error(`User with this username  already exists!`)
+            throw ApiError.BadRequest(`User with this username already exists!`)
         }
 
         const hashPassword = await bcrypt.hash(password, 10);
@@ -34,7 +35,7 @@ class UserService {
         const user = User.findOne({ activationLink });
 
         if (!user) {
-            throw new Error("Incorrect activation link.")
+            throw ApiError.BadRequest("Incorrect activation link.")
         } else {
             user.isActivated = true;
             await user.save();
