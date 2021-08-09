@@ -19,12 +19,12 @@ router.post("/signup", UserController.signup);
 router.post("/login", UserController.login);
 
 // [POST] /user/logout
-router.post("/logout");
+router.post("/logout", UserController.logout);
+
+// [POST] /user/refresh
+router.post("/refresh", UserController.refresh)
 
 // [POST] /user/activate/:link
 router.post("/activate/:link", UserController.activate);
-
-// [POST] /user/refresh
-router.post("/refresh")
 
 module.exports = router;

@@ -54,6 +54,15 @@ class UserService {
         };
     };
 
+    async logout(refreshToken) {
+        const token = await tokenService.removeToken(refreshToken);
+        return token;
+    };
+
+    async refresh(username) {
+
+    };
+
     async activate(activationLink) {
         const user = User.findOne({ activationLink });
 
