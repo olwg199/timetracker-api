@@ -12,6 +12,17 @@ class UserController {
         }
     };
 
+    async login(req, res, next) {
+        try {
+            const { username, password } = req.body;
+            const userData = await userService.login(username, password);
+            res.cookie("refreshToken", userData.refreshToken, {});
+            return res.json(userData);
+        } catch (e) {
+            next(e);
+        }
+    };
+
     async activate(req, res, next) {
         try {
             const activationLink = req.body.link;
@@ -21,6 +32,7 @@ class UserController {
             next(e);
         }
     };
+
 }
 
 module.exports = new UserController();

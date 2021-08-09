@@ -31,6 +31,29 @@ class UserService {
         };
     };
 
+    async login(username, password) {
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            throw ApiError.BadRequest("Incorrect login credentials.")
+        }
+
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        if (!isPasswordMatch) {
+            throw ApiError.BadRequest("Incorrect login credentials.")
+        }
+
+        const userDto = new UserDto(user);
+        const tokens = tokenService.generateToken({ ...userDto });
+
+        await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+        return {
+            ...tokens,
+            user: userDto
+        };
+    };
+
     async activate(activationLink) {
         const user = User.findOne({ activationLink });
 
