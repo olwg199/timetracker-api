@@ -5,6 +5,7 @@ const express = require("express");
 const morgan = require("morgan");
 const authentication = require("./api/middleware/authentication");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const app = express();
 
@@ -23,13 +24,10 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 // Preventing CORS errors
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, PATCH, DELETE");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-
-    next();
-});
+app.use(cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL
+}));
 
 // Routes middlware
 app.use('/tasks', authentication, taskRoutes);
