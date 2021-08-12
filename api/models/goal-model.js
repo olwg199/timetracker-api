@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const taskSchema = mongoose.Schema({
+const goalSchema = mongoose.Schema({
     title: {
         type: String,
         required: true
@@ -14,13 +14,14 @@ const taskSchema = mongoose.Schema({
         required: true
     },
     datesAchieved: {
-        type: [Date]
+        type: [Date],
+        default: []
     },
     isActive: {
         type: Boolean,
-        required: true
+        default: true
     },
     description: String
 });
 
-module.exports = mongoose.model("Task", taskSchema);
+module.exports = mongoose.model("Goal", goalSchema);

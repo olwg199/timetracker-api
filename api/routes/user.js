@@ -10,7 +10,7 @@ mongoose.connect(
     { useNewUrlParser: true, useUnifiedTopology: true }
 );
 
-const User = require("../models/user");
+const User = require("../models/user-model");
 
 // [POST] /user/signup
 router.post("/signup", UserController.signup);
@@ -22,7 +22,7 @@ router.post("/login", UserController.login);
 router.post("/logout", UserController.logout);
 
 // [POST] /user/refresh
-router.post("/refresh", UserController.refresh)
+router.get("/refresh", UserController.refresh)
 
 // [POST] /user/activate/:link
 router.post("/activate/:link", UserController.activate);

@@ -4,7 +4,7 @@ const mailService = require("./mail-service");
 const tokenService = require("./token-service");
 const UserDto = require("../dtos/user-dto");
 
-const User = require("../models/user");
+const User = require("../models/user-model");
 const ApiError = require("../exceptions/api-error");
 
 class UserService {

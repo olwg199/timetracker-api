@@ -9,8 +9,8 @@ const cors = require("cors");
 
 const app = express();
 
-const taskRoutes = require("./api/routes/tasks");
-const userRoutes = require("./api/routes/users");
+const goalRoutes = require("./api/routes/goals");
+const userRoutes = require("./api/routes/user");
 const error = require("./api/middleware/error");
 
 // Body parsing
@@ -30,7 +30,7 @@ app.use(cors({
 }));
 
 // Routes middlware
-app.use('/tasks', authentication, taskRoutes);
+app.use('/goals', goalRoutes);
 app.use('/user', userRoutes);
 
 // Error handling
